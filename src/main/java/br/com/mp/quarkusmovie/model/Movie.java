@@ -12,9 +12,8 @@ import java.util.Objects;
 public class Movie implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id")
     private Long id;
-    @Column(name = "name")
+
     private String name;
 
     @Column(name="imdb_id")
