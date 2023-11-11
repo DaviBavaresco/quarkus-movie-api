@@ -1,7 +1,13 @@
 package br.com.mp.quarkusmovie.service;
 
+import br.com.mp.quarkusmovie.exception.BusinessException;
 import br.com.mp.quarkusmovie.model.Movie;
+import br.com.mp.quarkusmovie.model.User;
+import br.com.mp.quarkusmovie.model.UserMovie;
+import br.com.mp.quarkusmovie.model.UserMoviePK;
+import br.com.mp.quarkusmovie.model.dto.UserMovieModelAPI;
 import br.com.mp.quarkusmovie.repository.MovieRepository;
+import br.com.mp.quarkusmovie.repository.UserMovieRepository;
 import br.com.mp.quarkusmovie.restclient.IMDBAPIRestClient;
 import br.com.mp.quarkusmovie.restclient.model.MovieIMDB;
 import jakarta.enterprise.context.ApplicationScoped;
@@ -29,6 +35,9 @@ public class MovieService {
     @Inject
     @RestClient
     IMDBAPIRestClient imdbapiRestClient;
+
+    @Inject
+    UserMovieRepository userMovieRepository;
 
     @Transactional
     public MovieIMDB search(String query) {
@@ -60,5 +69,30 @@ public class MovieService {
 
     public List<Movie> listBestRated() {
     return movieRepository.listBestRated();
+    }
+    @Transactional
+    public Movie evaluate(UserMovieModelAPI userMovieModelAPI) {
+
+        if(!userMovieModelAPI.getAreadyWatched()){
+            throw new BusinessException("Erro: para dar uma avaliação é nescessario assistir o filme");
+        }
+
+        Movie movie = movieRepository.findyIMDBID(userMovieModelAPI.getMovieIMDBId());
+
+        UserMoviePK userMoviePK =  new UserMoviePK();
+        userMoviePK.setUserId(1L);
+        userMoviePK.setMovieId(movie.getId());
+
+        UserMovie userMovie = new UserMovie();
+        userMovie.setMovie(movie);
+        userMovie.setUserMoviePK(userMoviePK);
+        userMovie.setIrAreadyWatched(userMovieModelAPI.getAreadyWatched());
+        userMovie.setWatchlist(userMovieModelAPI.getWatchList());
+        userMovie.setRate(userMovieModelAPI.getRate());
+
+
+        userMovieRepository.persist(userMovie);
+
+        return movie;
     }
 }

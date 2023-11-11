@@ -1,12 +1,14 @@
 package br.com.mp.quarkusmovie.resources;
 
 import br.com.mp.quarkusmovie.model.Movie;
+import br.com.mp.quarkusmovie.model.dto.UserMovieModelAPI;
 import br.com.mp.quarkusmovie.restclient.IMDBAPIRestClient;
 import br.com.mp.quarkusmovie.restclient.model.MovieIMDB;
 import br.com.mp.quarkusmovie.service.MovieService;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
+import jakarta.ws.rs.core.Response;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.eclipse.microprofile.jwt.JsonWebToken;
 import org.eclipse.microprofile.openapi.annotations.Operation;
@@ -51,5 +53,11 @@ public class MovieResource {
     @Path("/listBestRated")
     public List<Movie> listBestRated(){
         return movieService.listBestRated();
+    }
+    @POST
+    @Path("/evaluate")
+    public Response evaluate(UserMovieModelAPI userMovieModelAPI){
+       movieService.evaluate(userMovieModelAPI);
+       return Response.status(Response.Status.CREATED).build();
     }
 }
