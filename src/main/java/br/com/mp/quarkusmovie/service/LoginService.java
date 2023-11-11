@@ -8,6 +8,7 @@ import br.com.mp.quarkusmovie.util.GenerateToken;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.NotAuthorizedException;
+import org.springframework.security.crypto.bcrypt.BCrypt;
 
 import java.util.Optional;
 @ApplicationScoped
@@ -26,6 +27,8 @@ public class LoginService {
            throw new NotAuthorizedException("Erro ao efetuar a autenticação");
 
        }
+
+
 
         String token = generateToken.generateTokenJWT(user.get());
 

@@ -5,11 +5,13 @@ import br.com.mp.quarkusmovie.model.dto.UserMovieModelAPI;
 import br.com.mp.quarkusmovie.restclient.IMDBAPIRestClient;
 import br.com.mp.quarkusmovie.restclient.model.MovieIMDB;
 import br.com.mp.quarkusmovie.service.MovieService;
+import jakarta.annotation.security.RolesAllowed;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
 import jakarta.ws.rs.core.Response;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
+import org.eclipse.microprofile.jwt.Claims;
 import org.eclipse.microprofile.jwt.JsonWebToken;
 import org.eclipse.microprofile.openapi.annotations.Operation;
 import org.eclipse.microprofile.openapi.annotations.enums.SchemaType;
@@ -28,6 +30,9 @@ public class MovieResource {
 
     @Inject
     JsonWebToken jwt;
+
+
+
 
     @Operation(summary = "Método para buscar filmes")
     @APIResponse(responseCode = "200",
@@ -55,9 +60,11 @@ public class MovieResource {
         return movieService.listBestRated();
     }
     @POST
+    @RolesAllowed("User")
     @Path("/evaluate")
     public Response evaluate(UserMovieModelAPI userMovieModelAPI){
-       movieService.evaluate(userMovieModelAPI);
+       String emailUser = jwt.getName();
+       movieService.evaluate(userMovieModelAPI, emailUser);
        return Response.status(Response.Status.CREATED).build();
     }
 }

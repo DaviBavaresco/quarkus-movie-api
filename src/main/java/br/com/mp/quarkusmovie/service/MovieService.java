@@ -8,16 +8,19 @@ import br.com.mp.quarkusmovie.model.UserMoviePK;
 import br.com.mp.quarkusmovie.model.dto.UserMovieModelAPI;
 import br.com.mp.quarkusmovie.repository.MovieRepository;
 import br.com.mp.quarkusmovie.repository.UserMovieRepository;
+import br.com.mp.quarkusmovie.repository.UserRepository;
 import br.com.mp.quarkusmovie.restclient.IMDBAPIRestClient;
 import br.com.mp.quarkusmovie.restclient.model.MovieIMDB;
 import jakarta.enterprise.context.ApplicationScoped;
 import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
+import jakarta.ws.rs.NotAuthorizedException;
 import org.eclipse.microprofile.config.inject.ConfigProperty;
 import org.eclipse.microprofile.rest.client.inject.RestClient;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @ApplicationScoped
 public class MovieService {
@@ -38,6 +41,9 @@ public class MovieService {
 
     @Inject
     UserMovieRepository userMovieRepository;
+
+    @Inject
+    UserRepository userRepository;
 
     @Transactional
     public MovieIMDB search(String query) {
@@ -71,7 +77,13 @@ public class MovieService {
     return movieRepository.listBestRated();
     }
     @Transactional
-    public Movie evaluate(UserMovieModelAPI userMovieModelAPI) {
+    public Movie evaluate(UserMovieModelAPI userMovieModelAPI, String emailUser) {
+
+        Optional<User> user = userRepository.findByEmail(emailUser);
+
+        if(user.isEmpty()){
+            throw new NotAuthorizedException("Erro ao obter credencias do usuario");
+        }
 
         if(!userMovieModelAPI.getAreadyWatched()){
             throw new BusinessException("Erro: para dar uma avaliação é nescessario assistir o filme");
@@ -80,7 +92,7 @@ public class MovieService {
         Movie movie = movieRepository.findyIMDBID(userMovieModelAPI.getMovieIMDBId());
 
         UserMoviePK userMoviePK =  new UserMoviePK();
-        userMoviePK.setUserId(1L);
+        userMoviePK.setUserId(user.get().getId());
         userMoviePK.setMovieId(movie.getId());
 
         UserMovie userMovie = new UserMovie();
@@ -91,7 +103,7 @@ public class MovieService {
         userMovie.setRate(userMovieModelAPI.getRate());
 
 
-        userMovieRepository.persist(userMovie);
+        userMovieRepository.getEntityManager().merge(userMovie);
 
         return movie;
     }

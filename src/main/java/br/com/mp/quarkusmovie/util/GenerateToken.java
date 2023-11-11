@@ -25,7 +25,7 @@ public class GenerateToken {
                 Jwt.issuer(issuer)
                         .expiresAt(Instant.now().plus(Duration.ofHours(1)))
                         .upn(user.getEmail())
-                        .groups(new HashSet<>(Arrays.asList("user")))
+                        .groups(new HashSet<>(Arrays.asList("User")))
                         .sign();
         System.out.println(token);
         return token;

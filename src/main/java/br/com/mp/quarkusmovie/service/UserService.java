@@ -21,9 +21,11 @@ public class UserService {
 
         Optional<User> userOptional = userRepository.findByEmail(userDTO.getEmail());
 
-        if(userOptional.isPresent()){
-            throw new BusinessException("Usuario já cadastrado");
+
+        if(userOptional.isPresent() ){
+            throw new BusinessException("Usuario já cadastrado com este email");
         }
+
 
         User user = new User();
         user.setName(userDTO.getName());
