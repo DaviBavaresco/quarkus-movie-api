@@ -19,19 +19,13 @@ public class LoginService {
     @Inject
     UserRepository userRepository;
     public LoginResponseDTO login(LoginDTO loginDTO){
-
-        LoginResponseDTO loginResponseDTO = new LoginResponseDTO();
-
+       LoginResponseDTO loginResponseDTO = new LoginResponseDTO();
        Optional<User> user = userRepository.findByEmail(loginDTO.getEmail());
        if(user.isEmpty()){
            throw new NotAuthorizedException("Erro ao efetuar a autenticação");
 
        }
-
-
-
-        String token = generateToken.generateTokenJWT(user.get());
-
+       String token = generateToken.generateTokenJWT(user.get());
        loginResponseDTO.setEmail(user.get().getEmail());
        loginResponseDTO.setToken(token);
 

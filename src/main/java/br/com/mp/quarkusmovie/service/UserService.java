@@ -9,6 +9,7 @@ import jakarta.inject.Inject;
 import jakarta.transaction.Transactional;
 import jakarta.ws.rs.BadRequestException;
 
+import java.util.List;
 import java.util.Optional;
 
 @ApplicationScoped
@@ -34,5 +35,8 @@ public class UserService {
 
 
         userRepository.persist(user);
+    }
+    public List<User> list(){
+        return userRepository.listAll();
     }
 }

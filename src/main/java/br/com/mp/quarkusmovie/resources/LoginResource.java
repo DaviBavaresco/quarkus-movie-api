@@ -16,9 +16,16 @@ public class LoginResource {
 
     @Inject
     LoginService loginService;
+
+    @Inject
+    GenerateToken generateToken;
+
     @PermitAll
     @POST
     public LoginResponseDTO login(LoginDTO loginDTO){
     return loginService.login(loginDTO);
     }
+
+
+
 }
