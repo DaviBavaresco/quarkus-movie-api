@@ -55,7 +55,8 @@ CREATE TABLE user_movie (
 );
 
 
-INSERT INTO "public"."users"("id","name","email","password") VALUES (12, 'marcus', 'mp@mp.com', 'movie123');
+INSERT INTO "public"."users"("id","name","email","password") VALUES (10, 'davi', 'davi@', 'davi123');
+INSERT INTO "public"."users"("id","name","email","password") VALUES (11, 'cecilia', 'cecilia@', 'cecilia123');
 
 
 INSERT INTO "public"."movie"("id","name","imdb_id","image_url","qualifier","rank","staff","year")
